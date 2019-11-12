@@ -1,4 +1,4 @@
-./pam/aporeto/cert
-./pam/aporeto/token
-./pam/gmail/cert
-./pam/gmail/token
+/pam/aporeto/cert
+/pam/aporeto/token
+/pam/gmail/cert
+/pam/gmail/token
