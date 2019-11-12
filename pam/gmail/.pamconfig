@@ -1,0 +1,6 @@
+export APOCTL_API="https://api.console.aporeto.com"
+export APOCTL_NAMESPACE="/aporeto/se/v1"
+
+export SSH_KEY="~/.ssh/aporeto-ecdsa"
+export SSH_HOST="pamdemo.se.aporeto.io"
+export SSH_USER="admin"

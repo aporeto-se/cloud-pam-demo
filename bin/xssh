@@ -1,0 +1,178 @@
+#!/bin/sh
+
+export PAMCONFIG=.pamconfig
+export TOKEN=token
+export CERT=cert
+
+# set -x
+
+main() {
+
+  which jwt > /dev/null 2>&1 || { err "jwt not found in path"; return 2; }
+  which ssh > /dev/null 2>&1 || { err "ssh not found in path"; return 2; }
+
+  case "$1" in
+    clear) load_config && cmd_pam_clear ;;
+    getcert) load_config && cmd_pam_get_cert ;;
+    gettoken) load_config && cmd_pam_get_token ;;
+    showcert) load_config && cmd_pam_show_cert ;;
+    showtoken) load_config && cmd_pam_show_token ;;
+    ssh) load_config && cmd_pam_ssh $@ ;;
+    validatecert) load_config && cmd_pam_validate_cert ;;
+    validatetoken) load_config && cmd_pam_validate_token ;;
+    writeconfig) cmd_write_config ;;
+    *)
+    err "Usage: $(basename $0) {getcert|gettoken|showcert|showtoken|validatetoken|validatecert|ssh|clear|writeconfig}"
+    return 2
+  esac
+}
+
+load_config() {
+  [ -f $PAMCONFIG ] || {
+    err "File $PAMCONFIG not found. Use the arg writeconfig to write a basic config file"
+    return 2
+  }
+  . $PAMCONFIG
+}
+
+pam_show_token() { cmd_pam_show_token; }
+
+cmd_pam_show_token() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  [ -f $TOKEN ] || { err "Token not found"; return 2; }
+  jwt decode `cat token` -j 
+}
+
+pam_validate_token() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  local e=$(cmd_pam_validate_token 2>&1)
+  local rc=$?
+  [ $rc -ne 0 ] && { err $e; return $rc; }
+  return 0
+}
+
+cmd_pam_validate_token() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  [ -f $TOKEN ] || { err "Token not found"; return 2; }
+  local token_expire=$(jwt decode `cat token` -j | jq ".payload.exp")
+  [[ $token_expire ]] && {
+    local adjusted_time=$(expr $(date +%s) - 600)
+    [ $token_expire -gt $adjusted_time ] && {
+      err "token valid"
+      return 0
+    } || { err "token expired"; return 3; }
+  } || { err "token invalid"; return 4; }
+}
+
+pam_get_token() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  local e=$(cmd_pam_get_token 2>&1)
+  local rc=$?
+  [ $rc -ne 0 ] && { err $e; return $rc; }
+  return 0
+}
+
+cmd_pam_get_token() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  [ -f $TOKEN ] && { pam_validate_token && { err "token is already present and valid"; return 0; }; }
+  err "getting token"
+  apoctl auth google --api $APOCTL_API > token
+}
+
+pam_validate_cert() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  local e=$(cmd_pam_validate_cert 2>&1)
+  local rc=$?
+  [ $rc -ne 0 ] && { err $e; return $rc; }
+  return 0
+}
+
+cmd_pam_validate_cert() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  [ -f $CERT ] || { err "Cert not found"; return 2; }
+  local valid=$(cat cert | apoctl ssh inspect | grep Valid: | awk '{print $NF}')
+  [[ "${valid:0:1}" == "-" ]] && { err "Cert expired"; return 3; }
+  cat $CERT | apoctl ssh inspect > /dev/null 2>&1 || return 3
+  err "cert valid"
+  return 0
+}
+
+pam_show_cert() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  local e=$(cmd_pam_show_cert 2>&1)
+  local rc=$?
+  [ $rc -ne 0 ] && { err $e; return $rc; }
+  return 0
+}
+
+cmd_pam_show_cert() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  [ -f $CERT ] || { err "Cert not found"; return 2; }
+  cat $CERT | apoctl ssh inspect
+}
+
+pam_get_cert() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  local e=$(cmd_pam_get_cert 2>&1)
+  local rc=$?
+  [ $rc -ne 0 ] && { err $e; return $rc; }
+  return 0
+}
+
+cmd_pam_get_cert() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+  pam_get_token || return $?
+  [ -f $CERT ] && { pam_validate_cert && { err "cert is already present and valid"; return 0; }; }
+  apoctl ssh cert --public-key ${SSH_KEY}.pub --token $(<$TOKEN) \
+    --namespace $APOCTL_NAMESPACE > $CERT
+}
+
+pam_clear() { cmd_pam_clear; }
+
+cmd_pam_clear() { rm -rf $TOKEN $CERT; }
+
+pam_ssh() { cmd_pam_ssh $@; }
+
+cmd_pam_ssh() {
+  [[ $APOCTL_API ]] || { err "Please set APOCTL_API"; return 2; }
+  [[ $APOCTL_NAMESPACE ]] || { err "Please set APOCTL_NAMESPACE"; return 2; }
+
+  [[ $SSH_KEY ]] || { err "Please set SSH_KEY"; return 2; }
+  [[ $SSH_HOST ]] || { err "Please set SSH_HOST"; return 2; }
+  [[ $SSH_USER ]] || { err "Please set SSH_USER"; return 2; }
+  pam_get_cert || return $?
+  ssh -i ${SSH_KEY} -i $CERT ${SSH_USER}@${SSH_HOST};
+}
+
+cmd_write_config() {
+  [ -f $PAMCONFIG ] && { err "File $PAMCONFIG already exist"; return 2; }
+  _echo_config > $PAMCONFIG;
+}
+
+_echo_config()
+{
+cat <<'EOF'
+# Set the desired vars and uncomment them
+# export APOCTL_API="https://api.console.aporeto.com"
+# export APOCTL_NAMESPACE="/"
+# export SSH_KEY="~/.ssh/aporeto-ecdsa"
+# export SSH_HOST="?"
+# export SSH_USER="admin"
+# export SSH_USER="ec2-user"
+EOF
+}
+
+err() { echo "$@" 1>&2; }
+
+main $@
