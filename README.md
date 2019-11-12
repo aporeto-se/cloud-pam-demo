@@ -42,7 +42,7 @@ Aporeto allows you to manage, control, and monitor secure shell (SSH) access to 
 
 The User Authorization sequence looks like the following
 
-![User Authorization sequence](./images/ssh-pam.png "SSH PAM")
+![User Authorization sequence](./images/SSH-PAM.png "SSH PAM")
 
 
 (TODO : Expand on each of the steps, with more details about the interaction, payload, who does what, dump of each packet communication to visualize the interaction)
@@ -88,7 +88,7 @@ Install the following before you begin:
 ## Configure User to sign in with OIDC 
 [Product Documentation : Configuring OIDC for SSH and Aporeto control plane users](https://docs.aporeto.com/docs/main/guides/ssh/ssh-overview/) 
 
-![OIDC sequence](/images/oidc.png "OIDC")
+![OIDC sequence](/images/OIDC.png "OIDC")
 
 1. Add Aporeto to the identity provider. 
 
@@ -222,7 +222,7 @@ Install the following before you begin:
     * If you do not want this policy to be visible in the child namespaces, select Hide propagation to child namespaces.
     * Type @auth:realm=oidc in the Subject field and press ENTER. Then type the Aporeto tag that defines the value of the claim that must appear in the user's Aporeto token. Some examples follow.
 
-    ![Aporeto tag](./images/aporeto-tag.png "Tags")
+    ![Aporeto tag](./images/Aporeto-Tag.png "Tags")
 
     * Select the namespace that you want to allow the user to access from the Target Namespace list box. Click Next.
 
