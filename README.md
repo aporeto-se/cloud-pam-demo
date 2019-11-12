@@ -88,6 +88,9 @@ Install the following before you begin:
 ## Configure User to sign in with OIDC 
 [Product Documentation : Configuring OIDC for SSH and Aporeto control plane users](https://docs.aporeto.com/docs/main/guides/ssh/ssh-overview/) 
 
+Note: If you have already setup Users to sign-in with OIDC, you can skip this section. 
+
+
 ![OIDC sequence](./images/OIDC.png "OIDC")
 
 
@@ -152,55 +155,55 @@ Install the following before you begin:
 
     curl $IDP_URL/.well-known/openid-configuration
     {
-    "issuer": "https://accounts.google.com",
-    "authorization_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
-    "token_endpoint": "https://oauth2.googleapis.com/token",
-    "userinfo_endpoint": "https://openidconnect.googleapis.com/v1/userinfo",
-    "revocation_endpoint": "https://oauth2.googleapis.com/revoke",
-    "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
-    "response_types_supported": [
-    "code",
-    "token",
-    "id_token",
-    "code token",
-    "code id_token",
-    "token id_token",
-    "code token id_token",
-    "none"
-    ],
-    "subject_types_supported": [
-    "public"
-    ],
-    "id_token_signing_alg_values_supported": [
-    "RS256"
-    ],
-    "scopes_supported": [
-    "openid",
-    "email",
-    "profile"
-    ],
-    "token_endpoint_auth_methods_supported": [
-    "client_secret_post",
-    "client_secret_basic"
-    ],
-    "claims_supported": [
-    "aud",
-    "email",
-    "email_verified",
-    "exp",
-    "family_name",
-    "given_name",
-    "iat",
-    "iss",
-    "locale",
-    "name",
-    "picture",
-    "sub"
-    ],
-    "code_challenge_methods_supported": [
-    "plain",
-    "S256"
-    ]
+        "issuer": "https://accounts.google.com",
+        "authorization_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+        "token_endpoint": "https://oauth2.googleapis.com/token",
+        "userinfo_endpoint": "https://openidconnect.googleapis.com/v1/userinfo",
+        "revocation_endpoint": "https://oauth2.googleapis.com/revoke",
+        "jwks_uri": "https://www.googleapis.com/oauth2/v3/certs",
+        "response_types_supported": [
+            "code",
+            "token",
+            "id_token",
+            "code token",
+            "code id_token",
+            "token id_token",
+            "code token id_token",
+            "none"
+        ],
+        "subject_types_supported": [
+            "public"
+        ],
+        "id_token_signing_alg_values_supported": [
+            "RS256"
+        ],
+        "scopes_supported": [
+            "openid",
+            "email",
+            "profile"
+        ],
+        "token_endpoint_auth_methods_supported": [
+            "client_secret_post",
+            "client_secret_basic"
+        ],
+        "claims_supported": [
+            "aud",
+            "email",
+            "email_verified",
+            "exp",
+            "family_name",
+            "given_name",
+            "iat",
+            "iss",
+            "locale",
+            "name",
+            "picture",
+            "sub"
+        ],
+        "code_challenge_methods_supported": [
+            "plain",
+            "S256"
+        ]
     }
 
     ```
