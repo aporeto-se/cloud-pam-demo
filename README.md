@@ -90,6 +90,7 @@ Install the following before you begin:
 
 ![OIDC sequence](./images/OIDC.png "OIDC")
 
+
 1. Add Aporeto to the identity provider. 
 
    * Web application: Identity providers often support a variety of application types. If prompted, select web application.
