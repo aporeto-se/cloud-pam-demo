@@ -88,7 +88,7 @@ Install the following before you begin:
 ## Configure User to sign in with OIDC 
 [Product Documentation : Configuring OIDC for SSH and Aporeto control plane users](https://docs.aporeto.com/docs/main/guides/ssh/ssh-overview/) 
 
-![OIDC sequence](/images/OIDC.png "OIDC")
+![OIDC sequence](./images/OIDC.png "OIDC")
 
 1. Add Aporeto to the identity provider. 
 
