@@ -1,4 +1,4 @@
-# Zero Trust Security
+# Zero Trust Security - Aporeto Cloud PAM Solution
 ## Introduction
   This repo walks through the setup, configuration and scenarios of Aporeto Cloud PAM Solution. 
   (TODO : Couple of lines on the what is Cloud PAM and why is it a unique solution to a current challenge)
@@ -88,7 +88,7 @@ Install the following before you begin:
 ## Configure User to sign in with OIDC 
 [Product Documentation : Configuring OIDC for SSH and Aporeto control plane users](https://docs.aporeto.com/docs/main/guides/ssh/ssh-overview/) 
 
-Note: If you have already setup Users to sign-in with OIDC, you can skip this section. 
+**Note**: If you have already setup Users to sign-in with OIDC, you can skip this section. 
 
 
 ![OIDC sequence](./images/OIDC.png "OIDC")
