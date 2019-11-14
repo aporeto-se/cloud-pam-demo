@@ -316,9 +316,9 @@ On EC2 instances, we recommend configuring the Aporeto enforcer to authenticate 
 
 
 
-## Demo Setup (One time)
+## ----  Demo Time ----
 
-1. Clone the Repo to your laptop
+1. Clone the Repo to your laptop (One time)
 
 2. Add the current directory in your path. 
 
@@ -353,7 +353,9 @@ On EC2 instances, we recommend configuring the Aporeto enforcer to authenticate 
 
    The SSH_HOST `pamdemo.se.aporeto.io` is the host you are trying to ssh into as the user `admin`
 
-   The xssh ssh command does the following
+   The `xssh ssh` command does the following
+   * Get the 
+
 
 5. Next, in another terminal window, SSH using another IAM user from gmail
 

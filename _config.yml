@@ -1,1 +1,8 @@
 theme: jekyll-theme-midnight
+# --- General options --- #
+
+# Name of website
+title: Cloud PAM with Aporeto
+
+# Short description of your site
+description: Documentation to stand-up/demo and POC Cloud PAM with Aporeto
