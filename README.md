@@ -257,6 +257,8 @@ On EC2 instances, we recommend configuring the Aporeto enforcer to authenticate 
         SSH access to the EC2 instance with sudo or root privileges
 
 1. Set apoctl environment variables
+
+
         APOCTL_NAMESPACE: the base Aporeto namespace you want to use for your account/org
         NAMESPACE: the Aporeto namespace you want to use for the instance
         METADATA: the AWS metadata or tag to use to map the instance into the Aporeto namespace
@@ -265,6 +267,7 @@ On EC2 instances, we recommend configuring the Aporeto enforcer to authenticate 
         
 
     e.g. 
+    
         export APOCTL_NAMESPACE=/aporeto
         export NAMESPACE=ec2
         export METADATA=type=ec2
